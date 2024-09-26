@@ -47,9 +47,11 @@ export default function GlicemiaApp() {
         date: date,
         level: parseFloat(glicoseLevel),
       };
+
       const updatedRecords = [...records, newRecord].sort(
         (a, b) => b.date.getTime() - a.date.getTime()
       );
+
       setRecords(updatedRecords);
       localStorage.setItem("glicemiaRecords", JSON.stringify(updatedRecords));
       setGlicoseLevel("");
