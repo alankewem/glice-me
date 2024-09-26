@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,6 +29,8 @@ export default function GlicemiaApp() {
   const [shareLink, setShareLink] = useState<string>("");
   const [isCopied, setIsCopied] = useState<boolean>(false);
 
+  const calendarRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const savedRecords = localStorage.getItem("glicemiaRecords");
     if (savedRecords) {
@@ -39,6 +41,18 @@ export default function GlicemiaApp() {
         }))
       );
     }
+
+    function handleClickOutside(event: MouseEvent) {
+      if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
+        setShowCalendar(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   const saveRecord = () => {
@@ -114,13 +128,20 @@ export default function GlicemiaApp() {
               </Button>
             </div>
             {showCalendar && (
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={(newDate) => newDate && setDate(newDate)}
-                disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
-                className="rounded-md border"
-              />
+              <div ref={calendarRef}>
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={(newDate) => {
+                    if (newDate) {
+                      setDate(newDate);
+                      setShowCalendar(false);
+                    }
+                  }}
+                  disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                  className="rounded-md border"
+                />
+              </div>
             )}
             <div className="flex space-x-2">
               <Input
