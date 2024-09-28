@@ -173,7 +173,9 @@ export default function GlicemiaApp() {
           <ul className="space-y-2">
             {records.map((record, index) => (
               <li key={index} className="flex justify-between items-center">
-                <span>{record.date.toLocaleDateString()}</span>
+                <span>
+                  {record.date.toLocaleDateString("pt-BR")} - {record.date.toLocaleTimeString()}
+                </span>
                 <span>{record.level} mg/dL</span>
               </li>
             ))}
